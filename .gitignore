@@ -1,0 +1,31 @@
+# Secrets / local configuration — NEVER commit real credentials
+.env
+aitomia_agents/.env
+env.*
+*.key
+*.pem
+
+# Calculation outputs
+aitomia_results/
+result_dir/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+wheels/
+.venv/
+venv/
+.eggs/
+
+# Tooling / OS
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/

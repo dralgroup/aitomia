@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aitomia"
+version = "0.1.0"
+description = "Aitomia — an agentic framework for AI-driven atomistic and quantum chemical simulations"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Jinming Hu" },
+    { name = "Hassan Nawaz" },
+    { name = "Yi-Fan Hou" },
+    { name = "Yuting Rui" },
+    { name = "Lijie Chi" },
+    { name = "Yuxinxin Chen" },
+    { name = "Arif Ullah" },
+    { name = "Pavlo O. Dral", email = "dral@xmu.edu.cn" },
+]
+keywords = ["computational chemistry", "quantum chemistry", "agent", "LLM", "MLatom"]
+dependencies = [
+    "mlatom",
+    "numpy",
+    "pandas",
+    "colorama",
+    "jinja2",
+    "pydantic>=2",
+    "pydantic-settings>=2",
+    "python-dotenv",
+    "langgraph",
+    "langchain-core",
+    "langchain-openai",
+    "langchain-community",
+]
+
+[project.optional-dependencies]
+rag = ["faiss-cpu"]
+postgres = ["langgraph-checkpoint-postgres"]
+
+[project.urls]
+Homepage = "https://github.com/dralgroup/aitomia"
+Paper = "https://doi.org/10.1021/acs.jctc.6c00591"
+
+[project.scripts]
+aitomia = "aitomia_agents.cli:main"
+
+[tool.setuptools]
+packages = ["aitomia_agents", "aitomia_agents.excited_state_agents"]
+py-modules = ["main"]

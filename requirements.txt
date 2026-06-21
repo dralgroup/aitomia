@@ -1,0 +1,27 @@
+# Core runtime dependencies for the Aitomia CLI (DEV_MODE / local execution).
+#
+# The chemistry backend, MLatom, has its own substantial set of optional
+# dependencies (PySCF, xtb, TorchANI, etc.) depending on which methods you use.
+# See https://github.com/dralgroup/mlatom for installation details for the methods you need
+# (e.g. AIQM2, B3LYP/PySCF, GFN2-xTB).
+
+mlatom
+numpy
+pandas
+colorama
+jinja2
+pydantic>=2
+pydantic-settings>=2
+python-dotenv
+
+# Agent / LLM orchestration
+langgraph
+langchain-core
+langchain-openai
+langchain-community
+
+# --- Optional extras (not required for the CLI example) --------------------
+# Literature RAG (pre-built knowledge base is not shipped):
+#   faiss-cpu
+# PostgreSQL-backed conversation persistence (MEMORY_SAVER=postgres):
+#   langgraph-checkpoint-postgres

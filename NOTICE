@@ -1,0 +1,16 @@
+Aitomia
+Copyright 2026 Jinming Hu, Hassan Nawaz, Yi-Fan Hou, Yuting Rui, Lijie Chi,
+Yuxinxin Chen, Arif Ullah, and Pavlo O. Dral
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Aitomia is an AI computational chemist agent and is built heavily on MLatom
+(https://github.com/dralgroup/mlatom). MLatom and other third-party dependencies are
+distributed under their own licenses.
+
+If you use Aitomia in academic work, please cite:
+
+  Jinming Hu, Hassan Nawaz, Yi-Fan Hou, Yuting Rui, Lijie Chi, Yuxinxin Chen,
+  Arif Ullah, Pavlo O. Dral. Aitomia: An Agentic Framework for AI-Driven
+  Atomistic and Quantum Chemical Simulations. J. Chem. Theory Comput. 2026.
+  DOI: 10.1021/acs.jctc.6c00591

@@ -12,9 +12,9 @@ calculation through MLatom, and summarizes the results.
 
 This repository accompanies the paper:
 
-> Jinming Hu, Hassan Nawaz, Yi-Fan Hou, Yuting Rui, Lijie Chi, Yuxinxin Chen,
-> Arif Ullah, Pavlo O. Dral. *Aitomia: An Agentic Framework for AI-Driven
-> Atomistic and Quantum Chemical Simulations.* **J. Chem. Theory Comput.** 2026.
+> Jinming Hu, Hassan Nawaz, Yi-Fan Hou, Lijie Chi, Xin-Yu Tong, Yuting Rui,
+> Yuxinxin Chen, Arif Ullah, Pavlo O. Dral. *Aitomia: An Agentic Framework for
+> AI-Driven Atomistic and Quantum Chemical Simulations.* **J. Chem. Theory Comput.** 2026.
 > DOI: [10.1021/acs.jctc.6c00591](https://doi.org/10.1021/acs.jctc.6c00591)
 > · Preprint: [ChemRxiv](https://doi.org/10.26434/chemrxiv-2025-gnf13)
 > · [arXiv:2505.08195](https://arxiv.org/abs/2505.08195)

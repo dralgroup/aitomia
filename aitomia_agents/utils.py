@@ -336,8 +336,8 @@ class Analysis:
         )
 
         response = llm.invoke([system_prompt, error_message])
-        return response
-    
+        return response.content
+
 
     #analysis
     @classmethod

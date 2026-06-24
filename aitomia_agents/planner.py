@@ -57,6 +57,8 @@ def prompt_general_planner():
     prompt += "Below is the format of your output:\n"
     prompt += "\tEach task should be put in one line.\n"
     prompt += "\tEach line should also contain the information that is needed to perform the task containing:\n \t\t- molecule (Provide the path to the molecule, or the name of the molecule (it can be common name), or information about the chemical system extracted from user's input. You can use molecule from calculation result of previous task. In this case, the name for brief summary of previous task should be explicitly specified. If none is observed, state not specified)\n\t\t- method(If the user specifies a DFT functional with a basis set, write both together in the method field, e.g., 'wB97X/Def2-SVP'. The basis set should not be listed separately or under 'other conditions')\n\t\t- Method program (if specified, otherwise state not specified)\n\t\t- Calculation program (primary recommended program)\n\t\t- other conditions, according to the user's input.\n"
+    prompt += "Each task MUST contain only one molecule object. Never include multiple molecules in a single task.\n"
+    prompt += "If multiple molecules require the same operation, you should create separate task lines for each molecule.\n"
     prompt += "please be very careful that method program has nothing to do with calculation program, do not infer calculation program from method program :\n"
     prompt += "    1) a **method program** (the program used to implement the method, e.g., PySCF for many QM methods), and 2) a **calculation program** (the program or tool used to perform the specific task such as geometry optimization or frequency calculation, e.g., Geometric, Gaussian, ASE, SciPy).- If the chosen method is ML-based (AIQM1, AIQM2, ANI-1ccx, UAIQM, etc.), state that no specific method program is required (or list typical ML toolkits if relevant), but still provide a recommended calculation program when applicable.\n"
 
@@ -258,12 +260,66 @@ def workdir_manager_node(state:PlannerState):
             "messages_to_user": [AIMessage(content=f"Failed to manage working directory: {error_analysis}")],
         }
 
+def get_current_working_directory(state: PlannerState) -> Optional[str]:
+    if state.working_directory_stack:
+        return state.working_directory_stack[-1]
+    return state.working_directory
+
+def collect_error_logs(current_workdir: Optional[str], max_chars_per_file: int = 4000) -> str:
+    if not current_workdir:
+        return "Current working directory is not available."
+    if not os.path.isdir(current_workdir):
+        return f"Current working directory does not exist: {current_workdir}"
+
+    error_files = []
+    for file_name in sorted(os.listdir(current_workdir)):
+        file_path = os.path.join(current_workdir, file_name)
+        if os.path.isfile(file_path) and file_name.endswith(('.log', '.err', '.out')):
+            error_files.append(file_path)
+
+    if not error_files:
+        return f"No .log, .err, or .out files found under {current_workdir}."
+
+    collected_logs = []
+    for file_path in error_files:
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as handle:
+                file_content = handle.read(max_chars_per_file + 1)
+            if len(file_content) > max_chars_per_file:
+                file_content = file_content[:max_chars_per_file] + "\n... [truncated]"
+            collected_logs.append(f"File: {file_path}\n{file_content}")
+        except Exception as exc:
+            collected_logs.append(f"File: {file_path}\nFailed to read file: {str(exc)}")
+
+    return "\n\n".join(collected_logs)
+
+def error_summary_node(state: PlannerState):
+    logger.warning("Error detected in task execution, collecting logs before stopping workflow")
+
+    current_workdir = get_current_working_directory(state)
+    err_msg = collect_error_logs(current_workdir)
+    base_error = state.error or "Error detected in task execution"
+    error_message = f"{base_error}\nCurrent working directory: {current_workdir}\n\nCollected logs:\n{err_msg}"
+
+    try:
+        response = Analysis.error_analysis(error_message)
+        error_analysis = error_message + '\n\n' + response
+    except Exception as exc:
+        logger.error(f"Error in error_summary_node while analyzing failure: {str(exc)}")
+        error_analysis = error_message
+
+    return {
+        "error": error_message,
+        "messages": [AIMessage(content=base_error)],
+        "messages_to_user": [AIMessage(content=f"Task execution failed: {error_analysis}")],
+        "status": "failed",
+    }
+
 def conditional_edge(state:PlannerState):
     """Check for errors first, then check remaining tasks"""
     # If error occurred, stop the workflow
     if state.has_error:
-        logger.warning("Error detected in task execution, stopping workflow")
-        return END
+        return "error_summary_node"
     
     # Otherwise check remaining tasks
     ntasks = len(state.task_sequence)
@@ -351,6 +407,7 @@ planner_builder.add_node("judge_calculation_node", judge_calculation_node)
 planner_builder.add_node("method_confirm_node", method_confirm_node)
 planner_builder.add_node("general_planner_node",general_planner_node)
 planner_builder.add_node("workdir_manager_node",workdir_manager_node)
+planner_builder.add_node("error_summary_node", error_summary_node)
 planner_builder.add_node("summary_node",summary_node)
 planner_builder.add_node("task_node",task_type_graph)
 
@@ -372,10 +429,12 @@ planner_builder.add_conditional_edges(
     "task_node",
     conditional_edge,
     {
+        "error_summary_node",
         "workdir_manager_node",
         "summary_node",
     }
 )
+planner_builder.add_edge("error_summary_node", END)
 planner_builder.add_edge("summary_node", END)
 
 planner_graph = planner_builder.compile()

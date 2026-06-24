@@ -67,7 +67,7 @@ def prompt_suggestion():
     - Ground-state calculations:
     - Molecules containing only C, H, O, N → favor ML/QM hybrid methods, specifically AIQM2.
     - Molecules containing other elements (heavy atoms, halogens beyond F, transition metals, I, Br, etc.) → favor UAIQM as a general-purpose method for ground states.
-    - Excited-state calculations → favor AIQM1.
+    - Excited-state calculations and Molecules containing only C, H, O, N → favor AIQM1.
     - High-accuracy emphasis:
     - If the user explicitly prioritizes accuracy over speed, recommend other high-level QM methods (e.g., DFT, CC, or other suitable QM approaches).
     - Alternatives:

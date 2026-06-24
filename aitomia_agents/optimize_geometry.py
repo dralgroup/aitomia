@@ -186,13 +186,15 @@ def geomopt_node(state:GeomoptState):
         error_message = f"Error in geomopt_node: {str(e)}"
         error_info = traceback.format_exc()
         logger.error(error_message + error_info)
+        response = Analysis.error_analysis(error_message)
+        error_analysis = error_message + '\n' + '\n' + response
         # writer = get_stream_writer()
         # writer(f"❌ {error_message}")
         return {
             "error": error_message,
             "has_error": True,
             "messages": [AIMessage(content=f"Geometry optimization failed: {error_message}")],
-            "messages_to_user": [AIMessage(content=f"Geometry optimization failed: {error_message}")],
+            "messages_to_user": [AIMessage(content=f"Geometry optimization failed: {error_analysis}")],
         }
 
 def geomopt_coder_node(state):

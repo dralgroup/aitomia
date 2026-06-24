@@ -54,6 +54,8 @@ def prompt_uvvis_planner():
     prompt += "Below is the format of your output:\n"
     prompt += "\tEach task should be put in one line.\n"
     prompt += "\tEach line should also contain the information that is needed to perform the task, e.g., molecule, method, Method program (if specified, otherwise state not specified), Calculation program (primary recommended program), and other conditions, according to the user's input.\n"
+    prompt += "Each task MUST contain only one molecule object. Never include multiple molecules in a single task.\n"
+    prompt += "If multiple molecules require the same operation (e.g., geometry optimization or UV-vis calculation), you must create separate task lines for each molecule.\n"
     prompt += "\tNo additional explanations or comments are needed.\n"
     prompt += "\tDo not provide the working directory in each line.\n"
     

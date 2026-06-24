@@ -117,7 +117,7 @@ def get_qm_method(method:str=None,
         tdadft: To judge if TDA-DFT calculation is required.
     """
     if isinstance(program, str):
-        if program.casefold() in ("gaussian", "orca"):
+        if program.casefold() in ("gaussian", "orca", "pyscf"):
             if tdadft:
                 method = f"tda-{method}"
             else:
@@ -476,6 +476,7 @@ def excited_state_analysis_node(state:UVvisState):
 
         with open(os.path.join(state.working_directory, "summary.out"), "w") as f:
             f.write(result_message_str)
+            Analysis.add_summary({'current_task_summary':result_message_str})
         result_message_str += f"Detailed summary can be found in {os.path.join(state.working_directory, 'summary.out')}\n"
 
 
